@@ -7,8 +7,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.MediaStore;
@@ -19,15 +17,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.Toast;
-
-
-import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -61,7 +54,9 @@ public class MainActivity extends AppCompatActivity {
 
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-        OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
+        OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor).connectTimeout(40000, TimeUnit.SECONDS).readTimeout(40000,TimeUnit.SECONDS).build();
+
+
 
         // Change base URL to your upload server URL.
         service = new Retrofit.Builder().baseUrl("http://e3144ae4.ngrok.io/").client(client).build().create(Service.class);
@@ -119,6 +114,7 @@ public class MainActivity extends AppCompatActivity {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
+
                     final String jsonGet = json;
                     //Toast.makeText(MainActivity.this, "Here is your dog prediction: "+json, Toast.LENGTH_LONG).show();
                     prgdialog.dismiss();
