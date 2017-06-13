@@ -118,20 +118,24 @@ public class MainActivity extends AppCompatActivity {
                     final String jsonGet = json;
                     //Toast.makeText(MainActivity.this, "Here is your dog prediction: "+json, Toast.LENGTH_LONG).show();
                     prgdialog.dismiss();
-                    AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
-                        alertDialog.setTitle("Result");
-                        alertDialog.setMessage("Click to see your result");
-                        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "View", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                                Intent intent = new Intent(MainActivity.this, DisplayDogInfo.class);
-                                intent.putExtra("jsonObject", jsonGet);
-                                intent.putExtra("imgFile", file);
-                                startActivity(intent);
-                            }
-                        });
-                        alertDialog.show();
+//                    AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
+//                        alertDialog.setTitle("Result");
+//                        alertDialog.setMessage("Click to see your result");
+//                        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "View", new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialog, int which) {
+//                                dialog.dismiss();
+//                                Intent intent = new Intent(MainActivity.this, DisplayDogInfo.class);
+//                                intent.putExtra("jsonObject", jsonGet);
+//                                intent.putExtra("imgFile", file);
+//                                startActivity(intent);
+//                            }
+//                        });
+//                        alertDialog.show();
+                    Intent intent = new Intent(MainActivity.this, DisplayDogInfo.class);
+                    intent.putExtra("jsonObject", jsonGet);
+                    intent.putExtra("imgFile", file);
+                    startActivity(intent);
                 }
 
                 @Override
