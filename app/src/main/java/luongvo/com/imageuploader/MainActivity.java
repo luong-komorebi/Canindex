@@ -17,9 +17,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InterruptedIOException;
+import java.net.SocketTimeoutException;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.MediaType;
@@ -39,27 +42,32 @@ public class MainActivity extends AppCompatActivity {
     private static final int PICK_IMAGE = 100;
     private static final int MY_PERMISSION_READ_STORAGE = 200;
     Service service;
-    File file = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        askForPermission();
+        initComponent();
 
-        Button upBtn = (Button)findViewById(R.id.uploadBtn);
+    }
+
+    private void askForPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, MY_PERMISSION_READ_STORAGE);
         }
+    }
 
-
+    private void initComponent() {
+        Button upBtn = (Button)findViewById(R.id.uploadBtn);
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-        OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor).connectTimeout(40000, TimeUnit.SECONDS).readTimeout(40000,TimeUnit.SECONDS).build();
+        OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor).connectTimeout(20, TimeUnit.SECONDS).readTimeout(20, TimeUnit.SECONDS).build();
 
 
 
         // Change base URL to your upload server URL.
-        service = new Retrofit.Builder().baseUrl("http://e3144ae4.ngrok.io/").client(client).build().create(Service.class);
+        service = new Retrofit.Builder().baseUrl(" http://b1634916.ngrok.io/").client(client).build().create(Service.class);
         if (upBtn != null) {
             upBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -76,7 +84,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
         }
-
     }
 
     @Override
@@ -84,9 +91,9 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == PICK_IMAGE && resultCode == Activity.RESULT_OK) {
 
-            final ProgressDialog prgdialog = new ProgressDialog(MainActivity.this);
-                prgdialog.setMessage("Processing...");
-                prgdialog.show();
+            final ProgressDialog progressDialog = new ProgressDialog(MainActivity.this);
+            progressDialog.setMessage("Processing...");
+            progressDialog.show();
 
             Uri selectedImage = data.getData();
             String[] filePathColumn = {MediaStore.Images.Media.DATA};
@@ -99,25 +106,32 @@ public class MainActivity extends AppCompatActivity {
             String filePath = cursor.getString(columnIndex);
             cursor.close();
 
-            file = new File(filePath);
+            File file = new File(filePath);
 
-            RequestBody reqFile = RequestBody.create(MediaType.parse("image/*"), file);
-            MultipartBody.Part body = MultipartBody.Part.createFormData("upload", file.getName(), reqFile);
-            RequestBody name = RequestBody.create(MediaType.parse("text/plain"), "upload_test");
-            retrofit2.Call<okhttp3.ResponseBody> req = service.postImage(body, name);
-            req.enqueue(new Callback<ResponseBody>() {
-                @Override
-                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                    String json = null;
-                    try {
-                        json = response.body().string();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+            makeRequest(file, progressDialog);
+        }
+    }
 
-                    final String jsonGet = json;
-                    //Toast.makeText(MainActivity.this, "Here is your dog prediction: "+json, Toast.LENGTH_LONG).show();
-                    prgdialog.dismiss();
+    private void makeRequest(final File file, final ProgressDialog progressDialog) {
+
+        RequestBody reqFile = RequestBody.create(MediaType.parse("image/*"), file);
+        MultipartBody.Part body = MultipartBody.Part.createFormData("upload", file.getName(), reqFile);
+        RequestBody name = RequestBody.create(MediaType.parse("text/plain"), "upload_test");
+        retrofit2.Call<okhttp3.ResponseBody> req = service.postImage(body, name);
+
+        req.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                String json = null;
+                try {
+                    json = response.body().string();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                final String jsonGet = json;
+                //Toast.makeText(MainActivity.this, "Here is your dog prediction: "+json, Toast.LENGTH_LONG).show();
+                progressDialog.dismiss();
 //                    AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
 //                        alertDialog.setTitle("Result");
 //                        alertDialog.setMessage("Click to see your result");
@@ -132,21 +146,24 @@ public class MainActivity extends AppCompatActivity {
 //                            }
 //                        });
 //                        alertDialog.show();
-                    Intent intent = new Intent(MainActivity.this, DisplayDogInfo.class);
-                    intent.putExtra("jsonObject", jsonGet);
-                    intent.putExtra("imgFile", file);
-                    startActivity(intent);
-                }
+                Intent intent = new Intent(MainActivity.this, DisplayDogInfo.class);
+                intent.putExtra("jsonObject", jsonGet);
+                intent.putExtra("imgFile", file);
+                startActivity(intent);
+            }
 
-                @Override
-                public void onFailure(Call<ResponseBody> call, Throwable t) {
-                    t.printStackTrace();
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                t.printStackTrace();
+                if (t instanceof SocketTimeoutException) {
+                    progressDialog.dismiss();
+                    Toast.makeText(MainActivity.this, "Timeout. Check your internet connection", Toast.LENGTH_SHORT).show();
                 }
-            });
-        }
+            }
+        });
     }
 
-    public File getFile() {
-        return this.file;
-    }
+//    public File getFile() {
+//        return this.file;
+//    }
 }
