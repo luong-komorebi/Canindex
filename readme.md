@@ -1,7 +1,5 @@
 ## Disclaimer 
 
-I pack all our work in 2 folder. One is working, one is not. We built a social network function for sharing dog photos in the latter, but it has bugs that we can't fix. It is there to show that we made a lot of effort although we did not succeed. 
-
 The rest of this readme shows how to run a web server to make dog breeed recognization possible.
 
 Also, we would like to apologize for not having host this somewhere (because we don't have credit card) and the recognization is not working at its best (because I couldn't train all the database with my local machine, I could only train for about 20 most popular dogs).
