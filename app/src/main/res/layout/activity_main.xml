@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_weight="3"
+    android:orientation="vertical"
+    android:id="@+id/MainActivityLinearLayout"
+    tools:context="com.example.admin.dogrecognizer.MainActivity">
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
+        android:cropToPadding="false"
+        android:elevation="3dp"
+        android:longClickable="true"
+        android:scaleType="fitCenter"
+        app:srcCompat="@drawable/logo2" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.5"
+        android:background="@color/logo_rear_color"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/recognize_button"
+            style="@android:style/Widget.Material.Button.Inset"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="0dp"
+            android:elevation="3dp"
+            android:text="Recognize"
+            android:textAllCaps="false"
+            android:textSize="20sp"
+            tools:layout_editor_absoluteX="122dp"
+            tools:layout_editor_absoluteY="99dp" />
+
+        <Button
+            android:id="@+id/map_button"
+            style="@android:style/Widget.Material.Button.Inset"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:elevation="3dp"
+            android:text="Places for dogs"
+            android:textAllCaps="false"
+            android:textSize="20sp"
+            tools:layout_editor_absoluteX="122dp"
+            tools:layout_editor_absoluteY="99dp" />
+
+        <Button
+            android:id="@+id/album_button"
+            style="@android:style/Widget.Material.Button.Inset"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:elevation="3dp"
+            android:text="Album"
+            android:textAllCaps="false"
+            android:textSize="20sp"
+            tools:layout_editor_absoluteX="122dp"
+            tools:layout_editor_absoluteY="99dp" />
+
+        <Button
+            android:id="@+id/adddog_button"
+            style="@android:style/Widget.Material.Button.Inset"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:elevation="3dp"
+            android:text="My dogs"
+            android:textAllCaps="false"
+            android:textSize="20sp"
+            tools:layout_editor_absoluteX="122dp"
+            tools:layout_editor_absoluteY="99dp" />
+
+        <Button
+            android:id="@+id/about_us_button"
+            style="@android:style/Widget.Material.Button.Inset"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:elevation="3dp"
+            android:text="About"
+            android:textAllCaps="false"
+            android:textSize="20sp"
+            tools:layout_editor_absoluteX="122dp"
+            tools:layout_editor_absoluteY="99dp" />
+    </LinearLayout>
+</LinearLayout>
+
